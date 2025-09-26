@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Primal Hunter Series Progress Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .calculate-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin-bottom: 25px;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .results {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            margin-top: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .result-item {
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .result-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .highlight {
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .progress-bar {
+            background: #e1e8ed;
+            height: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        .slider-container {
+            margin: 10px 0;
+            padding: 0;
+        }
+
+
+        .current-percentage {
+            position: relative;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 700;
+            color: #667eea;
+            margin: 5px 0 15px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 2px solid #e1e8ed;
+            cursor: pointer;
+            transition: border-color 0.3s;
+            overflow: hidden;
+            height: 52px;
+            box-sizing: border-box;
+        }
+
+        .current-percentage-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(102,126,234,0.3) 0%, rgba(118,75,162,0.3) 100%);
+            border-radius: 6px;
+            transition: width 0.3s ease;
+            pointer-events: none;
+        }
+
+        .current-percentage:hover {
+            border-color: #667eea;
+        }
+
+        .current-percentage input {
+            background: transparent;
+            border: none;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 700;
+            color: #667eea;
+            width: 100%;
+            outline: none;
+            -moz-appearance: textfield;
+            padding: 0;
+            margin: 0;
+            height: 100%;
+            line-height: 24px;
+            box-sizing: border-box;
+        }
+
+        .current-percentage input::-webkit-outer-spin-button,
+        .current-percentage input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .book-list {
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 2px solid #e1e8ed;
+        }
+
+        .book-list h3 {
+            margin-bottom: 15px;
+            color: #555;
+        }
+
+        .book-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+        }
+
+        .book-item {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 14px;
+            border: 1px solid #e1e8ed;
+        }
+
+        .book-button {
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .book-button:hover {
+            background: #e9ecef;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .book-button.selected {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 10px rgba(102,126,234,0.3);
+        }
+
+        .error {
+            background: #fee;
+            border: 1px solid #fcc;
+            color: #c33;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                margin: 10px;
+                border-radius: 10px;
+            }
+
+            .header {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 1.5em;
+            }
+
+            .content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Primal Hunter Progress Tracker</h1>
+            <p>Track your reading progress through the series by Zogarth</p>
+        </div>
+
+        <div class="content">
+            <div class="input-group">
+                <label>Current Book</label>
+                <div class="book-grid" id="bookSelector">
+                    <div class="book-item book-button" data-book="1">Book 1<br>714 pages</div>
+                    <div class="book-item book-button" data-book="2">Book 2<br>544 pages</div>
+                    <div class="book-item book-button" data-book="3">Book 3<br>532 pages</div>
+                    <div class="book-item book-button" data-book="4">Book 4<br>752 pages</div>
+                    <div class="book-item book-button" data-book="5">Book 5<br>674 pages</div>
+                    <div class="book-item book-button" data-book="6">Book 6<br>670 pages</div>
+                    <div class="book-item book-button" data-book="7">Book 7<br>722 pages</div>
+                    <div class="book-item book-button" data-book="8">Book 8<br>604 pages</div>
+                    <div class="book-item book-button" data-book="9">Book 9<br>604 pages</div>
+                    <div class="book-item book-button" data-book="10">Book 10<br>638 pages</div>
+                    <div class="book-item book-button" data-book="11">Book 11<br>722 pages</div>
+                    <div class="book-item book-button" data-book="12">Book 12<br>602 pages</div>
+                    <div class="book-item book-button" data-book="13">Book 13<br>606 pages</div>
+                    <div class="book-item book-button" data-book="14">Book 14<br>651 pages</div>
+                </div>
+            </div>
+
+            <div class="input-group" id="progressGroup" style="display: none;">
+                <label>Progress in Current Book</label>
+
+                <div class="slider-container">
+                    <div class="current-percentage" id="currentPercentageDisplay">
+                        <div class="current-percentage-fill" id="currentPercentageFill" style="width: 0%"></div>
+                        <span id="percentageText" style="position: relative; z-index: 1;">0%</span>
+                        <input type="number" id="percentageInput" min="0" max="100" style="display: none; position: relative; z-index: 1;" onblur="disablePercentageInput()" onkeyup="handlePercentageKeyup(event)">
+                    </div>
+
+                </div>
+            </div>
+
+            <div id="error" class="error" style="display: none;"></div>
+
+            <div id="results" class="results" style="display: none;">
+                <div id="currentProgress" class="result-item"></div>
+                <div id="wordsRead" class="result-item"></div>
+                <div class="progress-bar">
+                    <div id="progressFill" class="progress-fill" style="width: 0%"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Words per page constant
+        const WORDS_PER_PAGE = 300;
+
+        // Page counts for each published Primal Hunter book
+        const PRIMAL_HUNTER_BOOKS = {
+            1: 714,
+            2: 544,
+            3: 532,
+            4: 752,
+            5: 674,
+            6: 670,
+            7: 722,
+            8: 604,
+            9: 604,
+            10: 638,
+            11: 722,
+            12: 602,
+            13: 606,
+            14: 651
+        };
+
+        let selectedBook = null;
+        let currentPercentage = 0;
+
+        function showError(message) {
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            document.getElementById('results').style.display = 'none';
+        }
+
+        function hideError() {
+            document.getElementById('error').style.display = 'none';
+        }
+
+        function selectBook(bookNumber) {
+            // Remove previous selection
+            document.querySelectorAll('.book-button').forEach(btn => btn.classList.remove('selected'));
+
+            // Add selection to clicked book
+            document.querySelector(`[data-book="${bookNumber}"]`).classList.add('selected');
+
+            selectedBook = bookNumber;
+
+            // Show percentage input and reset to 0%
+            document.getElementById('progressGroup').style.display = 'block';
+            currentPercentage = 0;
+
+            updatePercentageDisplay();
+        }
+
+        function updatePercentageDisplay() {
+            // Update the percentage display
+            document.getElementById('percentageText').textContent = `${currentPercentage}%`;
+
+            // Update the visual progress bar
+            document.getElementById('currentPercentageFill').style.width = `${currentPercentage}%`;
+
+            // Auto-calculate if book is selected
+            if (selectedBook) {
+                calculateAndDisplayProgress();
+            }
+        }
+
+
+        let isDragging = false;
+        let dragStartTime = 0;
+        let clickThreshold = 150; // ms
+
+        function getPercentageFromMouseX(mouseX, rect) {
+            const relativeX = mouseX - rect.left;
+            const percentage = Math.max(0, Math.min(100, (relativeX / rect.width) * 100));
+            return Math.round(percentage);
+        }
+
+        function handleProgressMouseDown(event) {
+            isDragging = false;
+            dragStartTime = Date.now();
+
+            const rect = event.currentTarget.getBoundingClientRect();
+            const newPercentage = getPercentageFromMouseX(event.clientX, rect);
+
+            currentPercentage = newPercentage;
+            updatePercentageDisplay();
+
+            // Set up drag listeners
+            const handleMouseMove = (e) => {
+                isDragging = true;
+                const newPercentage = getPercentageFromMouseX(e.clientX, rect);
+                currentPercentage = newPercentage;
+                updatePercentageDisplay();
+            };
+
+            const handleMouseUp = (e) => {
+                document.removeEventListener('mousemove', handleMouseMove);
+                document.removeEventListener('mouseup', handleMouseUp);
+
+                // If it was a quick click without dragging, enable text input
+                const clickDuration = Date.now() - dragStartTime;
+                if (!isDragging && clickDuration < clickThreshold) {
+                    enablePercentageInput();
+                } else if (isDragging) {
+                    // Copy results to clipboard after dragging
+                    copyResultsToClipboard();
+                }
+
+                isDragging = false;
+            };
+
+            document.addEventListener('mousemove', handleMouseMove);
+            document.addEventListener('mouseup', handleMouseUp);
+
+            event.preventDefault();
+        }
+
+        function enablePercentageInput() {
+            const textSpan = document.getElementById('percentageText');
+            const input = document.getElementById('percentageInput');
+
+            textSpan.style.display = 'none';
+            input.style.display = 'block';
+            input.value = currentPercentage;
+            input.focus();
+            input.select();
+        }
+
+        function disablePercentageInput() {
+            const textSpan = document.getElementById('percentageText');
+            const input = document.getElementById('percentageInput');
+
+            // Update the percentage from input value
+            const value = parseInt(input.value);
+            if (!isNaN(value) && value >= 0 && value <= 100) {
+                currentPercentage = value;
+                updatePercentageDisplay();
+            }
+
+            textSpan.style.display = 'block';
+            input.style.display = 'none';
+        }
+
+        function handlePercentageKeyup(event) {
+            if (event.key === 'Enter') {
+                disablePercentageInput();
+            } else if (event.key === 'Escape') {
+                // Cancel editing, revert to original value
+                const textSpan = document.getElementById('percentageText');
+                const input = document.getElementById('percentageInput');
+
+                textSpan.style.display = 'block';
+                input.style.display = 'none';
+            }
+        }
+
+        function calculateAndDisplayProgress() {
+            hideError();
+
+            const bookNumber = selectedBook;
+            const percentage = currentPercentage;
+
+            // Validation
+            if (!bookNumber) {
+                showError('Please select a book.');
+                return;
+            }
+
+            if (!(bookNumber in PRIMAL_HUNTER_BOOKS)) {
+                showError(`Book ${bookNumber} not found.`);
+                return;
+            }
+
+            // Calculate words read in current book
+            const currentBookPages = PRIMAL_HUNTER_BOOKS[bookNumber];
+            const currentBookWords = currentBookPages * WORDS_PER_PAGE;
+            const wordsReadCurrent = Math.floor(currentBookWords * (percentage / 100));
+
+            // Calculate total words read in all previous books
+            let wordsFromPreviousBooks = 0;
+            for (let i = 1; i < bookNumber; i++) {
+                wordsFromPreviousBooks += PRIMAL_HUNTER_BOOKS[i] * WORDS_PER_PAGE;
+            }
+
+            // Calculate total words read in series
+            const totalWordsRead = wordsFromPreviousBooks + wordsReadCurrent;
+
+            // Calculate total words in published books
+            const totalSeriesWords = Object.values(PRIMAL_HUNTER_BOOKS).reduce((sum, pages) => sum + pages * WORDS_PER_PAGE, 0);
+
+            // Calculate overall percentage
+            const overallPercentage = (totalWordsRead / totalSeriesWords) * 100;
+
+            // Display results
+            document.getElementById('currentProgress').innerHTML = `<span class="highlight">${Math.round(percentage)}%</span> into Book ${bookNumber}`;
+            document.getElementById('wordsRead').innerHTML = `<span class="highlight">${totalWordsRead.toLocaleString()}</span> words of the series read so far (<span class="highlight">${Math.round(overallPercentage)}%</span>)`;
+
+            // Update progress bar
+            document.getElementById('progressFill').style.width = `${overallPercentage}%`;
+
+            // Show results
+            document.getElementById('results').style.display = 'block';
+        }
+
+        function copyResultsToClipboard() {
+            if (!selectedBook || !document.getElementById('results').style.display || document.getElementById('results').style.display === 'none') {
+                return;
+            }
+
+            // Get the current progress text
+            const progressText = document.getElementById('currentProgress').textContent;
+            const wordsText = document.getElementById('wordsRead').textContent;
+
+            const textToCopy = `${progressText}\n${wordsText}`;
+
+            // Try to copy to clipboard
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    showCopyNotification();
+                }).catch(err => {
+                    console.error('Failed to copy to clipboard:', err);
+                });
+            } else {
+                // Fallback for older browsers or non-secure contexts
+                const textArea = document.createElement('textarea');
+                textArea.value = textToCopy;
+                textArea.style.position = 'fixed';
+                textArea.style.left = '-999999px';
+                textArea.style.top = '-999999px';
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+
+                try {
+                    document.execCommand('copy');
+                    showCopyNotification();
+                } catch (err) {
+                    console.error('Failed to copy to clipboard:', err);
+                }
+
+                document.body.removeChild(textArea);
+            }
+        }
+
+        function showCopyNotification() {
+            // Create a temporary notification
+            const notification = document.createElement('div');
+            notification.textContent = 'Progress copied to clipboard!';
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #667eea;
+                color: white;
+                padding: 12px 20px;
+                border-radius: 8px;
+                font-weight: 600;
+                z-index: 1000;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                transition: opacity 0.3s ease;
+            `;
+
+            document.body.appendChild(notification);
+
+            // Fade out and remove after 2 seconds
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                setTimeout(() => {
+                    if (document.body.contains(notification)) {
+                        document.body.removeChild(notification);
+                    }
+                }, 300);
+            }, 2000);
+        }
+
+        // Initialize event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.book-button').forEach(button => {
+                button.addEventListener('click', function() {
+                    selectBook(parseInt(this.dataset.book));
+                });
+            });
+
+            // Add mouse event listener for the progress display
+            document.getElementById('currentPercentageDisplay').addEventListener('mousedown', handleProgressMouseDown);
+        });
+    </script>
+</body>
+</html>
