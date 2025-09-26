@@ -4,23 +4,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Comfy Rainbow</title>
+    <title>Aaron's Corner</title>
     <style>
         body {
-            background-color: #304680;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
             margin: 0;
+            padding: 40px 20px;
+            min-height: 100vh;
+            line-height: 1.6;
         }
-        img {
-            max-width: 80%;
-            max-height: 80%;
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .header img {
+            width: 120px;
+            height: auto;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content-item {
+            display: block;
+            color: inherit;
+            text-decoration: none;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+            border-left: 4px solid rgba(255,255,255,0.3);
+        }
+
+        .content-item:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateX(5px);
+        }
+
+        .content-item h3 {
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .content-item p {
+            opacity: 0.9;
         }
     </style>
 </head>
 <body>
-    <img src="comfy.png" alt="Comfy Rainbow Image">
+    <div class="container">
+        <div class="header">
+            <img src="comfy.png" alt="Comfy Rainbow">
+            <p>A cozy spot for standalone projects</p>
+        </div>
+
+        <a href="book.html" class="content-item">
+            <h3>Primal Hunter Progress Tracker</h3>
+            <p>A reading progress tracker for the Primal Hunter series with interactive features and progress visualization.</p>
+        </a>
+    </div>
 </body>
 </html>
