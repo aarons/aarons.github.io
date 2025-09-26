@@ -98,6 +98,12 @@
             padding: 25px;
             margin-top: 20px;
             border-left: 4px solid #667eea;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .results:hover {
+            background: #f0f2f5;
         }
 
         .result-item {
@@ -421,9 +427,6 @@
                 const clickDuration = Date.now() - dragStartTime;
                 if (!isDragging && clickDuration < clickThreshold) {
                     enablePercentageInput();
-                } else if (isDragging) {
-                    // Copy results to clipboard after dragging
-                    copyResultsToClipboard();
                 }
 
                 isDragging = false;
@@ -604,6 +607,11 @@
 
             // Add mouse event listener for the progress display
             document.getElementById('currentPercentageDisplay').addEventListener('mousedown', handleProgressMouseDown);
+
+            // Add click event listener for the results box
+            document.getElementById('results').addEventListener('click', function() {
+                copyResultsToClipboard();
+            });
         });
     </script>
 </body>
